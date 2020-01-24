@@ -1,10 +1,9 @@
 {
   "name": "@keeex/react-native-ssh-sftp",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "SSH and SFTP client library for React Native.",
   "main": "index.js",
-  "scripts": {
-  },
+  "scripts": {},
   "keywords": [
     "react-native"
   ],
@@ -19,9 +18,8 @@
   "peerDependencies": {
     "react-native": "^0.54.0"
   },
-  "repository" :
-  {
-    "type" : "git",
-    "url" : "https://github.com/KeeeX/react-native-ssh-sftp.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/KeeeX/react-native-ssh-sftp.git"
   }
 }
