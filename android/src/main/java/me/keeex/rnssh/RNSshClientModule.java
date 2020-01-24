@@ -1,4 +1,4 @@
-package com.reactlibrary;
+package me.keeex.rnssh;
 
 import android.os.Environment;
 import android.util.Log;

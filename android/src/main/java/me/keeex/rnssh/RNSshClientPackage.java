@@ -1,4 +1,4 @@
-package com.reactlibrary;
+package me.keeex.rnssh;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,11 +14,6 @@ public class RNSshClientPackage implements ReactPackage {
     @Override
     public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
       return Arrays.<NativeModule>asList(new RNSshClientModule(reactContext));
-    }
-
-    // Deprecated from RN 0.47
-    public List<Class<? extends JavaScriptModule>> createJSModules() {
-      return Collections.emptyList();
     }
 
     @Override
