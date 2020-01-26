@@ -4,8 +4,23 @@ SSH and SFTP client library for React Native.
 
 ## Installation
 
+This fork of the library is not published on npmjs.
+
+If you have access to our own repository you can install using:
 ```
-npm install react-native-ssh-sftp --save
+npm install @keeex/react-native-ssh-sftp
+```
+
+It is otherwise possible to install the package by hand.
+First, clone this repository; install dependencies, then build package.
+Finally, install in your project.
+```Shell
+/ $ git clone https://github.com/KeeeX/react-native-ssh-sftp.git
+/ $ cd react-native-ssh-sftp
+/react-native-ssh-sftp $ npm install
+/react-native-ssh-sftp $ npm pack
+/react-native-ssh-sftp $ cd ../your_project
+/your_project $ npm install ../react-native-ssh-sftp/keeex-react-native-ssh-sftp-1.1.1.tgz
 ```
 
 ### iOS (only)
