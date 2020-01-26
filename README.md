@@ -6,10 +6,11 @@ SSH and SFTP client library for React Native.
 
 ```
 npm install react-native-ssh-sftp --save
-react-native link react-native-ssh-sftp
 ```
 
 ### iOS (only)
+
+(procedure below is untested on recent version)
 
 NMSSH is required for iOS.
 
@@ -33,28 +34,19 @@ NMSSH is required for iOS.
 
 #### iOS
 
+(not that this should not be required anymore)
+
 1. In XCode, in the project navigator, right click `Libraries` ➜ `Add Files to [your project's name]`
 2. Go to `node_modules` ➜ `react-native-ssh-sftp` and add `RNSSHClient.xcodeproj`
 3. In XCode, in the project navigator, select your project. Add `libRNSSHClient.a` to your project's `Build Phases` ➜ `Link Binary With Libraries`
 
 #### Android
 
-1. Open up `android/app/src/main/java/[...]/MainActivity.java`
-		- Add `import me.keeex.rnssh.RNSshClientPackage;` to the imports at the top of the file
-		- Add `new RNSshClientPackage()` to the list returned by the `getPackages()` method
-2. Append the following lines to `android/settings.gradle`:
-  	```
-  	include ':react-native-ssh-sftp'
-  	project(':react-native-ssh-sftp').projectDir = new File(rootProject.projectDir, 	'../node_modules/@keeex/react-native-ssh-sftp/android')
-  	```
-3. Insert the following lines inside the dependencies block in `android/app/build.gradle`:
-  	```
-    compile project(':react-native-ssh-sftp')
-  	```
+Don't manual link.
 
 ## Demo
 
-![example](https://raw.githubusercontent.com/shaqian/react-native-ssh-sftp/master/example.gif)
+![example](https://raw.githubusercontent.com/KeeeX/react-native-ssh-sftp/master/example.gif)
 
 - This library is also used in iOS app PiHelper. 
 
@@ -84,24 +76,32 @@ react-native run-android
 
 ## Usage
 
+All functions that run asynchronously where we have to wait for a result
+returns Promises that can reject if an error occured.
+
 ### Create a client using password authentication
 ```javascript
 import SSHClient from 'react-native-ssh-sftp';
 
-let client = new SSHClient('10.0.0.10', 22, 'user', 'password', (error) => {
-  if (error)
-    console.warn(error);
-});
+SSHClient.connectWithPassword(
+  "10.0.0.10",
+  22,
+  "user",
+  "password"
+).then(client => {/*...*/});
 ```
 
 ### Create a client using public key authentication
 ```javascript
 import SSHClient from 'react-native-ssh-sftp';
 
-let client = new SSHClient('10.0.0.10', 22, 'user', {privateKey: '-----BEGIN RSA......'}, (error) => {
-  if (error)
-    console.warn(error);
-});
+SSHClient.connectWithKey(
+  "10.0.0.10",
+  22,
+  "user",
+  privateKey="-----BEGIN RSA...",
+  passphrase
+).then(client => {/*...*/});
 ```
 
 - Public key authentication also supports:
@@ -119,12 +119,8 @@ client.disconnect();
 ### Execute SSH command
 ```javascript
 var command = 'ls -l';
-client.execute(command, (error, output) => {
-  if (error)
-    console.warn(error);
-  if (output)
-    console.warn(output);
-});
+client.execute(command)
+  .then(output => console.warn(output));
 ```
 
 ### Shell
@@ -133,10 +129,8 @@ client.execute(command, (error, output) => {
 - Supported ptyType: vanilla, vt100, vt102, vt220, ansi, xterm
 ```javascript
 var ptyType = 'vanilla';
-client.startShell(ptyType, (error) => {
-  if (error)
-    console.warn(error);
-});
+client.startShell(ptyType)
+  .then(() => {/*...*/});
 ```
 
 #### Read from shell:
@@ -150,10 +144,8 @@ client.on('Shell', (event) => {
 #### Write to shell: 
 ```javascript
 var str = 'ls -l\n';
-client.writeToShell(str, (error) => {
-  if (error) 
-    console.warn(error);
-});
+client.writeToShell(str)
+  .then(() => {/*...*/});
 ```
 
 #### Close shell: 
@@ -165,65 +157,49 @@ client.closeShell();
 
 #### Connect SFTP
 ```javascript
-client.connectSFTP((error) => {
-  if (error)
-    console.warn(error);
-});
+client.connectSFTP()
+  .then(() => {/*...*/});
 ```
 
 #### List directory: 
 ```javascript
 var path = '.';
-client.sftpLs(path, (error, response) => {
-  if (error)
-    console.warn(error);
-  if (response)
-    console.warn(response);
-});
+client.sftpLs(path)
+  .then(response => console.warn(response));
 ```
 
 #### Create directory: 
 ```javascript
-client.sftpMkdir('dirName', (error) => {
-  if (error)
-    console.warn(error);
-});
+client.sftpMkdir('dirName')
+  .then(() => {/*...*/});
 ```
 
 #### Rename file or directory: 
 ```javascript
-client.sftpRename('oldName', 'newName', (error) => {
-  if (error)
-    console.warn(error);
-});
+client.sftpRename('oldName', 'newName')
+  .then(() => {/*...*/});
 ```
 
 #### Remove directory: 
 ```javascript
-client.sftpRmdir('dirName', (error) => {
-  if (error)
-    console.warn(error);
-});
+client.sftpRmdir('dirName')
+  .then(() => {/*...*/});
 ```
 
 #### Remove file: 
 ```javascript
-client.sftpRm('fileName', (error) => {
-  if (error)
-    console.warn(error);
-});
+client.sftpRm('fileName')
+  .then(() => {/*...*/});
 ```
 
 #### Download file: 
 ```javascript
-client.sftpDownload('[path-to-remote-file]', '[path-to-local-direcotry]', (error, downloadedFilePath) => {
-  if (error)
-    console.warn(error);
-  if (downloadedFilePath)
+client.sftpDownload('[path-to-remote-file]', '[path-to-local-directory]')
+  .then(downloadedFilePath => {
     console.warn(downloadedFilePath);
-});
+  });
 
-// Downlowd progress
+// Download progress (setup before call)
 client.on('DownloadProgress', (event) => {
   console.warn(event);
 });
@@ -234,12 +210,10 @@ client.sftpCancelDownload();
 
 #### Upload file: 
 ```javascript
-client.sftpUpload('[path-to-local-file]', '[path-to-remote-directory]', (error) => {
-  if (error)
-    console.warn(error);
-});
+client.sftpUpload('[path-to-local-file]', '[path-to-remote-directory]')
+  .then(() => {/*...*/});
 
-// Upload progress
+// Upload progress (setup before call)
 client.on('UploadProgress', (event) => {
   console.warn(event);
 });
