@@ -3,51 +3,99 @@ import {
   NativeModules,
   NativeEventEmitter,
   DeviceEventEmitter
-} from 'react-native';
+} from "react-native";
 
 const { RNSSHClient } = NativeModules;
 
 const RNSSHClientEmitter = new NativeEventEmitter(RNSSHClient);
 
-class SSHClient {
-  // passwordOrKey: password or {privateKey: value, [publicKey: value, passphrase: value]}
-	constructor(host, port, username, passwordOrKey, callback) {
-    this._key = Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+/**
+ * Manage a connection to an SSH Server
+ *
+ * Instances of SSHClient are created using the following factory functions:
+ * - SSHClient.connectWithKey()
+ * - SSHClient.connectWithPassword()
+ */
+export default class SSHClient {
+  /**
+   * Generic constructor
+   *
+   * Should not be called directly; use factory functions instead.
+   */
+  constructor(host, port, username, passwordOrKey, callback) {
+    this._key = SSHClient.getRandomClientKey();
     this.handlers = {};
     this.host = host;
     this.port = port;
     this.username = username;
     this.passwordOrKey = passwordOrKey;
     this._connect(callback);
-	}
+  }
 
+  /**
+   * Return a random client key.
+   *
+   * This key is used to identify which callback match with which instance.
+   */
+  static getRandomClientKey() {
+    return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+  }
+
+  /**
+   * Callback used to dispatch events
+   */
   _handleEvent (event) {
-    if (this.handlers.hasOwnProperty(event.name) && this._key === event.key) {
+    if (this.handlers[event.name] && this._key === event.key) {
       this.handlers[event.name](event.value);
     }
   }
 
-  on(event, handler) {
-    this.handlers[event] = handler;
+  /**
+   * Register an event handler
+   */
+  on(eventName, handler) {
+    this.handlers[eventName] = handler;
   }
 
+  /**
+   * Perform actual connection to server.
+   * Called automatically by constructor.
+   */
   _connect(callback) {
     if (Platform.OS === "android") {
-      if (typeof this.passwordOrKey === "string")
-        RNSSHClient.connectToHostByPassword(this.host, this.port, this.username, this.passwordOrKey, this._key,
-          (error) => {
-            callback && callback(error);
-          });
-      else
-        RNSSHClient.connectToHostByKey(this.host, this.port, this.username, this.passwordOrKey, this._key,
-          (error) => {
-            callback && callback(error);
-          });
+      if (typeof this.passwordOrKey === "string") {
+        RNSSHClient.connectToHostByPassword(
+          this.host, this.port,
+          this.username,
+          this.passwordOrKey,
+          this._key,
+          error => {
+            callback(error);
+          }
+        );
+      } else {
+        RNSSHClient.connectToHostByKey(
+          this.host,
+          this.port,
+          this.username,
+          this.passwordOrKey,
+          this._key,
+          error => {
+            callback(error);
+          }
+        );
+      }
     } else {
-      RNSSHClient.connectToHost(this.host, this.port, this.username, this.passwordOrKey, this._key,
-        (error) => {
-          callback && callback(error);
-        });
+      RNSSHClient.connectToHost(
+        this.host,
+        this.port,
+        this.username,
+        this.passwordOrKey,
+        this._key,
+        error => {
+          callback(error);
+        }
+      );
     }
   }
 
@@ -68,16 +116,24 @@ class SSHClient {
     });
   }
 
-  // ptyType: vanilla, vt100, vt102, vt220, ansi, xterm
   /**
    * Return a promise. Resolve when shell is open.
    * Still depend on the "Shell" event.
+   *
+   * @param {string} ptyType
+   * vanilla, vt100, vt102, vt220, ansi, xterm
    */
-	startShell(ptyType, callback) {
-    if (Platform.OS === 'ios') {
-      this.shellListener = RNSSHClientEmitter.addListener('Shell', this._handleEvent.bind(this));
+  startShell(ptyType, callback) {
+    if (Platform.OS === "ios") {
+      this.shellListener = RNSSHClientEmitter.addListener(
+        "Shell",
+        this._handleEvent.bind(this)
+      );
     } else {
-      this.shellListener = DeviceEventEmitter.addListener('Shell', this._handleEvent.bind(this));
+      this.shellListener = DeviceEventEmitter.addListener(
+        "Shell",
+        this._handleEvent.bind(this)
+      );
     }
     return new Promise((resolve, reject) => {
       RNSSHClient.startShell(this._key, ptyType, (error, response) => {
@@ -106,7 +162,7 @@ class SSHClient {
         }
         resolve(response);
       });
-    })
+    });
   }
 
   closeShell() {
@@ -123,12 +179,24 @@ class SSHClient {
   connectSFTP(callback) {
     return new Promise((resolve, reject) => {
       RNSSHClient.connectSFTP(this._key, (error) => {
-        if (Platform.OS === 'ios') {
-          this.downloadProgressListener = RNSSHClientEmitter.addListener('DownloadProgress', this._handleEvent.bind(this));
-          this.uploadProgressListener = RNSSHClientEmitter.addListener('UploadProgress', this._handleEvent.bind(this));
+        if (Platform.OS === "ios") {
+          this.downloadProgressListener = RNSSHClientEmitter.addListener(
+            "DownloadProgress",
+            this._handleEvent.bind(this)
+          );
+          this.uploadProgressListener = RNSSHClientEmitter.addListener(
+            "UploadProgress",
+            this._handleEvent.bind(this)
+          );
         } else {
-          this.downloadProgressListener = DeviceEventEmitter.addListener('DownloadProgress', this._handleEvent.bind(this));
-          this.uploadProgressListener = DeviceEventEmitter.addListener('UploadProgress', this._handleEvent.bind(this));
+          this.downloadProgressListener = DeviceEventEmitter.addListener(
+            "DownloadProgress",
+            this._handleEvent.bind(this)
+          );
+          this.uploadProgressListener = DeviceEventEmitter.addListener(
+            "UploadProgress",
+            this._handleEvent.bind(this)
+          );
         }
         if (callback) {
           callback(error);
@@ -261,7 +329,7 @@ class SSHClient {
         }
         resolve(response);
       });
-    })
+    });
   }
 
   sftpCancelDownload() {
@@ -291,8 +359,12 @@ class SSHClient {
   }
 }
 
-/** Connect using a key. 
- * 
+/** Connect using a key.
+ *
+ * @param privateKey
+ * The private key, in OpenSSH format.
+ * Only support RSA, DSA, ECDSA
+ *
  * Return a promise that resolve when the connection is established.
  * privateKey is a string.
  */
@@ -347,6 +419,4 @@ SSHClient.connectWithPassword = (
       resolve(result);
     }
   );
-})
-
-export default SSHClient;
+});
