@@ -27,6 +27,9 @@ export default class SSHClient {
    * The private key, in OpenSSH format.
    * Only support RSA, DSA, ECDSA
    *
+   * @param passphrase
+   * Passphrase to unlock the private key. Can be omitted.
+   *
    * Return a promise that resolve when the connection is established.
    * privateKey is a string.
    */
@@ -95,7 +98,7 @@ export default class SSHClient {
   constructor(host, port, username, passwordOrKey, callback) {
     this._handleEvent = this._handleEvent.bind(this);
     this._unregisterNativeListener = this._unregisterNativeListener.bind(this);
-    this._key = SSHClient.getRandomClientKey();
+    this._key = SSHClient._getRandomClientKey();
     this._listeners = {};
     this.handlers = {};
     this.host = host;
@@ -110,7 +113,7 @@ export default class SSHClient {
    *
    * This key is used to identify which callback match with which instance.
    */
-  static getRandomClientKey() {
+  static _getRandomClientKey() {
     return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
   }
 
@@ -213,7 +216,13 @@ export default class SSHClient {
   }
 
   /**
-   * Return a promise. Resolve with the output.
+   * Execute a command on the remote server
+   *
+   * @param command
+   * Command to execute, as a string
+   *
+   * @return
+   * A promise
    */
   execute(command, callback) {
     return new Promise((resolve, reject) => {
@@ -230,11 +239,15 @@ export default class SSHClient {
   }
 
   /**
-   * Return a promise. Resolve when shell is open.
-   * Still depend on the "Shell" event.
+   * Open a shell on the remote.
+   *
+   * You must handle the "Shell" events to get the shell outputs.
    *
    * @param {string} ptyType
    * vanilla, vt100, vt102, vt220, ansi, xterm
+   *
+   * @return
+   * A Promise that resolve with the initial output
    */
   startShell(ptyType, callback) {
     return new Promise((resolve, reject) => {
@@ -252,7 +265,10 @@ export default class SSHClient {
   }
 
   /**
-   * Return a promise.
+   * Send some input to the server
+   *
+   * @return
+   * A promise with the immediate reply
    */
   writeToShell(command, callback) {
     return new Promise((resolve, reject) => {
@@ -268,13 +284,19 @@ export default class SSHClient {
     });
   }
 
+  /**
+   * Close the open shell connection
+   */
   closeShell() {
     this._unregisterNativeListener(NATIVE_EVENT_SHELL);
     RNSSHClient.closeShell(this._key);
   }
 
   /**
-   * Return a promise
+   * Open an SFTP connection on the server
+   *
+   * @return
+   * A promise
    */
   connectSFTP(callback) {
     return new Promise((resolve, reject) => {
@@ -293,7 +315,13 @@ export default class SSHClient {
   }
 
   /**
-   * Return a promise
+   * List a directory content on the server
+   *
+   * @param path
+   * The path to list
+   *
+   * @return
+   * A promise with the file listing as an object.
    */
   sftpLs(path, callback) {
     return new Promise((resolve, reject) => {
@@ -310,7 +338,10 @@ export default class SSHClient {
   }
 
   /**
-   * Return a promise
+   * Rename a file on the server
+   *
+   * @return
+   * A promise
    */
   sftpRename(oldPath, newPath, callback) {
     return new Promise((resolve, reject) => {
@@ -327,7 +358,10 @@ export default class SSHClient {
   }
 
   /**
-   * Return a promise
+   * Create a directory on the server
+   *
+   * @return
+   * A promise
    */
   sftpMkdir(path, callback) {
     return new Promise((resolve, reject) => {
@@ -344,7 +378,10 @@ export default class SSHClient {
   }
 
   /**
-   * Return a promise
+   * Unlink a file on the server
+   *
+   * @return
+   * A promise
    */
   sftpRm(path, callback) {
     return new Promise((resolve, reject) => {
@@ -361,7 +398,10 @@ export default class SSHClient {
   }
 
   /**
-   * Return a promise
+   * Remove a directory from the server
+   *
+   * @return
+   * A promise
    */
   sftpRmdir(path, callback) {
     return new Promise((resolve, reject) => {
@@ -378,53 +418,93 @@ export default class SSHClient {
   }
 
   /**
-   * Return a promise
+   * Upload a file
+   *
+   * @param localFilePath
+   * Path to the source file on the filesystem
+   *
+   * @param remoteFilePath
+   * Path for the file on the remote server
+   *
+   * @return
+   * A promise
    */
-  sftpUpload(filePath, path, callback) {
+  sftpUpload(localFilePath, remoteFilePath, callback) {
     return new Promise((resolve, reject) => {
-      RNSSHClient.sftpUpload(filePath, path, this._key, (error) => {
-        if (callback) {
-          callback(error);
+      RNSSHClient.sftpUpload(
+        localFilePath,
+        remoteFilePath,
+        this._key,
+        error => {
+          if (callback) {
+            callback(error);
+          }
+          if (error) {
+            return reject(error);
+          }
+          resolve();
         }
-        if (error) {
-          return reject(error);
-        }
-        resolve();
-      });
+      );
     });
   }
 
+  /**
+   * Cancel a pending upload
+   */
   sftpCancelUpload() {
     RNSSHClient.sftpCancelUpload(this._key);
   }
 
   /**
-   * Return a promise
+   * Download a file from the server
+   *
+   * @param remoteFilePath
+   * Path to the file on the remote server
+   *
+   * @param localFilePath
+   * Path to the file on the local filesystem
+   *
+   * @return
+   * A promise
    */
-  sftpDownload(path, toPath, callback) {
+  sftpDownload(remoteFilePath, localFilePath, callback) {
     return new Promise((resolve, reject) => {
-      RNSSHClient.sftpDownload(path, toPath, this._key, (error, response) => {
-        if (callback) {
-          callback(error, response);
+      RNSSHClient.sftpDownload(
+        remoteFilePath,
+        localFilePath,
+        this._key,
+        (error, response) => {
+          if (callback) {
+            callback(error, response);
+          }
+          if (error) {
+            return reject(error);
+          }
+          resolve(response);
         }
-        if (error) {
-          return reject(error);
-        }
-        resolve(response);
-      });
+      );
     });
   }
 
+  /**
+   * Cancel a pending download
+   */
   sftpCancelDownload() {
     RNSSHClient.sftpCancelDownload(this._key);
   }
 
+  /**
+   * Close an open SFTP connection on the remote server
+   */
   disconnectSFTP() {
     this._unregisterNativeListener(NATIVE_EVENT_DOWNLOAD_PROGRESS);
     this._unregisterNativeListener(NATIVE_EVENT_UPLOAD_PROGRESS);
     RNSSHClient.disconnectSFTP(this._key);
   }
 
+  /**
+   * Close an open SSH connection on the remote server
+   */
   disconnect() {
     this._unregisterNativeListener("*");
     RNSSHClient.disconnect(this._key);
