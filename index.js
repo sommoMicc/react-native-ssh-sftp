@@ -331,7 +331,7 @@ SSHClient.connectWithPassword = (
   username,
   password,
   callback
-) => new Promise(resolve => {
+) => new Promise((resolve, reject) => {
   const result = new SSHClient(
     host,
     port,
