@@ -2,7 +2,7 @@
   "name": "@keeex/react-native-ssh-sftp",
   "version": "1.2.0",
   "description": "SSH and SFTP client library for React Native.",
-  "main": "lib/index.js",
+  "main": "lib/sshclient.js",
   "scripts": {
     "prepack": "npx grunt clean build"
   },
