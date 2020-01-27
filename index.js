@@ -9,6 +9,10 @@ const { RNSSHClient } = NativeModules;
 
 const RNSSHClientEmitter = new NativeEventEmitter(RNSSHClient);
 
+const NATIVE_EVENT_SHELL = "Shell";
+const NATIVE_EVENT_DOWNLOAD_PROGRESS = "DownloadProgress";
+const NATIVE_EVENT_UPLOAD_PROGRESS = "UploadProgress";
+
 /**
  * Manage a connection to an SSH Server
  *
@@ -89,7 +93,10 @@ export default class SSHClient {
    * Should not be called directly; use factory functions instead.
    */
   constructor(host, port, username, passwordOrKey, callback) {
+    this._handleEvent = this._handleEvent.bind(this);
+    this._unregisterNativeListener = this._unregisterNativeListener.bind(this);
     this._key = SSHClient.getRandomClientKey();
+    this._listeners = {};
     this.handlers = {};
     this.host = host;
     this.port = port;
@@ -121,6 +128,46 @@ export default class SSHClient {
    */
   on(eventName, handler) {
     this.handlers[eventName] = handler;
+  }
+
+  /**
+   * Register this instance to handle a native event
+   *
+   * @param eventName
+   * Name of the event. Must match when calling unregisterNativeListener()
+   */
+  _registerNativeListener(eventName) {
+    if (eventName === "*") {
+      throw new Error("Forbidden event name");
+    }
+    const listenerInterface = Platform.OS === "ios"
+      ? RNSSHClientEmitter
+      : DeviceEventEmitter;
+    this._listeners[eventName] = listenerInterface
+      .addListener(
+        eventName,
+        this._handleEvent
+      );
+  }
+
+  /**
+   * Unregister a native event listener
+   *
+   * @param eventName
+   * Must match the value from registerNativeListener()
+   */
+  _unregisterNativeListener(eventName) {
+    if (eventName === "*") {
+      Object.keys(this._listeners).forEach(
+        this._unregisterNativeListener
+      );
+    } else {
+      const listener = this._listeners[eventName];
+      if (listener) {
+        listener.remove();
+        delete this._listeners[eventName];
+      }
+    }
   }
 
   /**
@@ -190,18 +237,8 @@ export default class SSHClient {
    * vanilla, vt100, vt102, vt220, ansi, xterm
    */
   startShell(ptyType, callback) {
-    if (Platform.OS === "ios") {
-      this.shellListener = RNSSHClientEmitter.addListener(
-        "Shell",
-        this._handleEvent.bind(this)
-      );
-    } else {
-      this.shellListener = DeviceEventEmitter.addListener(
-        "Shell",
-        this._handleEvent.bind(this)
-      );
-    }
     return new Promise((resolve, reject) => {
+      this._registerNativeListener(NATIVE_EVENT_SHELL);
       RNSSHClient.startShell(this._key, ptyType, (error, response) => {
         if (callback) {
           callback(error, response);
@@ -232,10 +269,7 @@ export default class SSHClient {
   }
 
   closeShell() {
-    if (this.shellListener) {
-      this.shellListener.remove();
-      this.shellListener = null;
-    }
+    this._unregisterNativeListener(NATIVE_EVENT_SHELL);
     RNSSHClient.closeShell(this._key);
   }
 
@@ -245,25 +279,8 @@ export default class SSHClient {
   connectSFTP(callback) {
     return new Promise((resolve, reject) => {
       RNSSHClient.connectSFTP(this._key, (error) => {
-        if (Platform.OS === "ios") {
-          this.downloadProgressListener = RNSSHClientEmitter.addListener(
-            "DownloadProgress",
-            this._handleEvent.bind(this)
-          );
-          this.uploadProgressListener = RNSSHClientEmitter.addListener(
-            "UploadProgress",
-            this._handleEvent.bind(this)
-          );
-        } else {
-          this.downloadProgressListener = DeviceEventEmitter.addListener(
-            "DownloadProgress",
-            this._handleEvent.bind(this)
-          );
-          this.uploadProgressListener = DeviceEventEmitter.addListener(
-            "UploadProgress",
-            this._handleEvent.bind(this)
-          );
-        }
+        this._registerNativeListener(NATIVE_EVENT_DOWNLOAD_PROGRESS);
+        this._registerNativeListener(NATIVE_EVENT_UPLOAD_PROGRESS);
         if (callback) {
           callback(error);
         }
@@ -403,24 +420,13 @@ export default class SSHClient {
   }
 
   disconnectSFTP() {
-    if (this.downloadProgressListener) {
-      this.downloadProgressListener.remove();
-      this.downloadProgressListener = null;
-    }
-    if (this.uploadProgressListener) {
-      this.uploadProgressListener.remove();
-      this.uploadProgressListener = null;
-    }
+    this._unregisterNativeListener(NATIVE_EVENT_DOWNLOAD_PROGRESS);
+    this._unregisterNativeListener(NATIVE_EVENT_UPLOAD_PROGRESS);
     RNSSHClient.disconnectSFTP(this._key);
   }
 
   disconnect() {
-    if (this.shellListener)
-      this.shellListener.remove();
-    if (this.downloadProgressListener)
-      this.downloadProgressListener.remove();
-    if (this.uploadProgressListener)
-      this.uploadProgressListener.remove();
+    this._unregisterNativeListener("*");
     RNSSHClient.disconnect(this._key);
   }
 }
