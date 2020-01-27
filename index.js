@@ -17,6 +17,72 @@ const RNSSHClientEmitter = new NativeEventEmitter(RNSSHClient);
  * - SSHClient.connectWithPassword()
  */
 export default class SSHClient {
+  /** Connect using a key.
+   *
+   * @param privateKey
+   * The private key, in OpenSSH format.
+   * Only support RSA, DSA, ECDSA
+   *
+   * Return a promise that resolve when the connection is established.
+   * privateKey is a string.
+   */
+  static connectWithKey(
+    host,
+    port,
+    username,
+    privateKey,
+    passphrase,
+    callback
+  ) {
+    return new Promise((resolve, reject) => {
+      const result = new SSHClient(
+        host,
+        port,
+        username,
+        {
+          privateKey,
+          passphrase,
+        },
+        error => {
+          if (callback) {
+            callback(error);
+          }
+          if (error) {
+            return reject(error);
+          }
+          resolve(result);
+        }
+      );
+    });
+  }
+
+  /** Connect using a password */
+  static connectWithPassword(
+    host,
+    port,
+    username,
+    password,
+    callback
+  ) {
+    return new Promise((resolve, reject) => {
+      const result = new SSHClient(
+        host,
+        port,
+        username,
+        password,
+        error => {
+          if (callback) {
+            callback(error);
+          }
+          if (error) {
+            return reject(error);
+          }
+          resolve(result);
+        }
+      );
+    });
+  }
+
   /**
    * Generic constructor
    *
@@ -358,65 +424,3 @@ export default class SSHClient {
     RNSSHClient.disconnect(this._key);
   }
 }
-
-/** Connect using a key.
- *
- * @param privateKey
- * The private key, in OpenSSH format.
- * Only support RSA, DSA, ECDSA
- *
- * Return a promise that resolve when the connection is established.
- * privateKey is a string.
- */
-SSHClient.connectWithKey = (
-  host,
-  port,
-  username,
-  privateKey,
-  passphrase,
-  callback
-) => new Promise((resolve, reject) => {
-  const result = new SSHClient(
-    host,
-    port,
-    username,
-    {
-      privateKey,
-      passphrase,
-    },
-    error => {
-      if (callback) {
-        callback(error);
-      }
-      if (error) {
-        return reject(error);
-      }
-      resolve(result);
-    }
-  );
-});
-
-/** Connect using a password */
-SSHClient.connectWithPassword = (
-  host,
-  port,
-  username,
-  password,
-  callback
-) => new Promise((resolve, reject) => {
-  const result = new SSHClient(
-    host,
-    port,
-    username,
-    password,
-    error => {
-      if (callback) {
-        callback(error);
-      }
-      if (error) {
-        return reject(error);
-      }
-      resolve(result);
-    }
-  );
-});
