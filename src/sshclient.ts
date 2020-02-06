@@ -718,11 +718,16 @@ export default class SSHClient {
    * Close an open SFTP connection on the remote server
    */
   disconnectSFTP(): void {
-    this._unregisterNativeListener(NATIVE_EVENT_DOWNLOAD_PROGRESS);
-    this._unregisterNativeListener(NATIVE_EVENT_UPLOAD_PROGRESS);
-    // TODO this should use a callback too
-    RNSSHClient.disconnectSFTP(this._key);
-    this._activeStream.sftp = false;
+    // TODO This require a fix in the native part. I don't care.
+    // It actually still work since the native code disconnect() will actually
+    // close the sftp stream.
+    // Only downside is we can't *explicitely* close the sftp channel.
+    if (Platform.OS !== "ios") {
+      this._unregisterNativeListener(NATIVE_EVENT_DOWNLOAD_PROGRESS);
+      this._unregisterNativeListener(NATIVE_EVENT_UPLOAD_PROGRESS);
+      RNSSHClient.disconnectSFTP(this._key);
+      this._activeStream.sftp = false;
+    }
   }
 
   /**
