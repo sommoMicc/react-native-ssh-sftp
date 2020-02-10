@@ -302,6 +302,13 @@ RCT_EXPORT_METHOD(sftpRmdir:(NSString *)path
     }
 }
 
+RCT_EXPORT_METHOD(sftpChmod:(NSString *)path
+                  withPermissions:(NSInteger)permissions
+                  withKey:(nonnull NSString*) key
+                  withCallback:(RCTResponseSenderBlock)callback) {
+    callback(@[@"Not implemented"]);
+}
+
 RCT_EXPORT_METHOD(sftpDownload:(NSString *)path
                   toPath:(NSString *)toPath
                   withKey:(nonnull NSString*)key

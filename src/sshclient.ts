@@ -618,6 +618,39 @@ export default class SSHClient {
   }
 
   /**
+   * chmod a path on the remote
+   *
+   * Only available on Android
+   *
+   * @return
+   * A promise
+   */
+  sftpChmod(
+    path: string,
+    permissions: number,
+    callback: CallbackFunction<void>
+  ): Promise<void> {
+    return this._checkSFTP(callback)
+      .then(() => new Promise((resolve, reject) => {
+        RNSSHClient.sftpChmod(
+          path,
+          permissions,
+          this._key,
+          (
+            error: CBError
+          ) => {
+            if (callback) {
+              callback(error);
+            }
+            if (error) {
+              return reject(error);
+            }
+            resolve();
+          });
+      }));
+  }
+
+  /**
    * Upload a file
    *
    * @param localFilePath

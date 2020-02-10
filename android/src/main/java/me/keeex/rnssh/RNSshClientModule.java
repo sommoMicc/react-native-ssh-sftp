@@ -396,6 +396,24 @@ public class RNSshClientModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
+  public void sftpChmod(final String path, final int permissions, final String key, final Callback callback) {
+    new Thread(new Runnable()  {
+      public void run() {
+        try {
+          SSHClient client = clientPool.get(key);
+          ChannelSftp channelSftp = client._sftpSession;
+          channelSftp.chmod(permissions, path);
+          callback.invoke();
+        } catch (SftpException error) {
+          final String msg = "Failed to chmod " + path + " with permissions " + permissions;
+          Log.e(LOGTAG, msg);
+          callback.invoke(msg);
+        }
+      }
+    }).start();
+  }
+
+  @ReactMethod
   public void sftpDownload(final String filePath, final String path, final String key, final Callback callback) {
     new Thread(new Runnable()  {
       public void run() {
