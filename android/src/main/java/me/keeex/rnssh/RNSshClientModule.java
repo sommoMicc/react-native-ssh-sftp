@@ -198,6 +198,9 @@ public class RNSshClientModule extends ReactContextBaseJavaModule {
         } catch (IOException error) {
           Log.e(LOGTAG, "Error starting shell: " + error.getMessage());
           callback.invoke(error.getMessage());
+        } catch (Exception error) {
+          Log.e(LOGTAG, "Error sarting shell: " + error.getMessage());
+          callback.invoke(error.getMessage());
         }
       }
     }).start();
@@ -213,6 +216,9 @@ public class RNSshClientModule extends ReactContextBaseJavaModule {
           client._dataOutputStream.flush();
           callback.invoke();
         } catch (IOException error) {
+          Log.e(LOGTAG, "Error writing to shell:" + error.getMessage());
+          callback.invoke(error.getMessage());
+        } catch (Exception error) {
           Log.e(LOGTAG, "Error writing to shell:" + error.getMessage());
           callback.invoke(error.getMessage());
         }
@@ -256,6 +262,9 @@ public class RNSshClientModule extends ReactContextBaseJavaModule {
           client._sftpSession = channelSftp;
           callback.invoke();
         } catch (JSchException error) {
+          Log.e(LOGTAG, "Error connecting SFTP:" + error.getMessage());
+          callback.invoke(error.getMessage());
+        } catch (Exception error) {
           Log.e(LOGTAG, "Error connecting SFTP:" + error.getMessage());
           callback.invoke(error.getMessage());
         }
@@ -322,6 +331,9 @@ public class RNSshClientModule extends ReactContextBaseJavaModule {
         } catch (SftpException error) {
           Log.e(LOGTAG, "Failed to list path " + path);
           callback.invoke("Failed to list path " + path);
+        } catch (Exception error) {
+          Log.e(LOGTAG, "Failed to list path " + path);
+          callback.invoke("Failed to list path " + path);
         }
       }
     }).start();
@@ -337,6 +349,9 @@ public class RNSshClientModule extends ReactContextBaseJavaModule {
           channelSftp.rename(oldPath, newPath);
           callback.invoke();
         } catch (SftpException error) {
+          Log.e(LOGTAG, "Failed to rename path " + oldPath);
+          callback.invoke("Failed to rename path " + oldPath);
+        } catch (Exception error) {
           Log.e(LOGTAG, "Failed to rename path " + oldPath);
           callback.invoke("Failed to rename path " + oldPath);
         }
@@ -356,6 +371,9 @@ public class RNSshClientModule extends ReactContextBaseJavaModule {
         } catch (SftpException error) {
           Log.e(LOGTAG, "Failed to create directory " + path);
           callback.invoke("Failed to create directory " + path);
+        } catch (Exception error) {
+          Log.e(LOGTAG, "Failed to create directory " + path);
+          callback.invoke("Failed to create directory " + path);
         }
       }
     }).start();
@@ -371,6 +389,9 @@ public class RNSshClientModule extends ReactContextBaseJavaModule {
           channelSftp.rm(path);
           callback.invoke();
         } catch (SftpException error) {
+          Log.e(LOGTAG, "Failed to remove " + path);
+          callback.invoke("Failed to remove " + path);
+        } catch (Exception error) {
           Log.e(LOGTAG, "Failed to remove " + path);
           callback.invoke("Failed to remove " + path);
         }
@@ -390,6 +411,9 @@ public class RNSshClientModule extends ReactContextBaseJavaModule {
         } catch (SftpException error) {
           Log.e(LOGTAG, "Failed to remove " + path);
           callback.invoke("Failed to remove " + path);
+        } catch (Exception error) {
+          Log.e(LOGTAG, "Failed to remove " + path);
+          callback.invoke("Failed to remove " + path);
         }
       }
     }).start();
@@ -405,6 +429,10 @@ public class RNSshClientModule extends ReactContextBaseJavaModule {
           channelSftp.chmod(permissions, path);
           callback.invoke();
         } catch (SftpException error) {
+          final String msg = "Failed to chmod " + path + " with permissions " + permissions;
+          Log.e(LOGTAG, msg);
+          callback.invoke(msg);
+        } catch (Exception error) {
           final String msg = "Failed to chmod " + path + " with permissions " + permissions;
           Log.e(LOGTAG, msg);
           callback.invoke(msg);
@@ -426,6 +454,9 @@ public class RNSshClientModule extends ReactContextBaseJavaModule {
         } catch (SftpException error) {
           Log.e(LOGTAG, "Failed to download " + filePath);
           callback.invoke("Failed to download " + filePath);
+        } catch (Exception error) {
+          Log.e(LOGTAG, "Failed to download " + filePath);
+          callback.invoke("Failed to download " + filePath);
         }
       }
     }).start();
@@ -442,6 +473,9 @@ public class RNSshClientModule extends ReactContextBaseJavaModule {
           channelSftp.put(filePath, path + '/' + (new File(filePath)).getName(), new progressMonitor(key, "UploadProgress"), ChannelSftp.OVERWRITE);
           callback.invoke();
         } catch (SftpException error) {
+          Log.e(LOGTAG, "Failed to upload " + filePath);
+          callback.invoke("Failed to upload " + filePath);
+        } catch (Exception error) {
           Log.e(LOGTAG, "Failed to upload " + filePath);
           callback.invoke("Failed to upload " + filePath);
         }
