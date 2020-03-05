@@ -137,6 +137,9 @@ public class RNSshClientModule extends ReactContextBaseJavaModule {
       public void run() {
         try {
           SSHClient client = clientPool.get(key);
+          if (client == null) {
+              throw new Exception("client is null");
+          }
           Session session = client._session;
 
           ChannelExec channel = (ChannelExec) session.openChannel("exec");
@@ -168,6 +171,9 @@ public class RNSshClientModule extends ReactContextBaseJavaModule {
       public void run() {
         try {
           SSHClient client = clientPool.get(key);
+          if (client == null) {
+              throw new Exception("client is null");
+          }
           Session session = client._session;
 
           Channel channel = session.openChannel("shell");
@@ -212,6 +218,9 @@ public class RNSshClientModule extends ReactContextBaseJavaModule {
       public void run() {
         try {
           SSHClient client = clientPool.get(key);
+          if (client == null) {
+              throw new Exception("client is null");
+          }
           client._dataOutputStream.writeBytes(str);
           client._dataOutputStream.flush();
           callback.invoke();
@@ -232,6 +241,9 @@ public class RNSshClientModule extends ReactContextBaseJavaModule {
       public void run() {
         try {
           SSHClient client = clientPool.get(key);
+          if (client == null) {
+              throw new Exception("client is null");
+          }
           if (client._channel != null) {
               client._channel.disconnect();
           }
@@ -257,6 +269,9 @@ public class RNSshClientModule extends ReactContextBaseJavaModule {
       public void run() {
         try {
           SSHClient client = clientPool.get(key);
+          if (client == null) {
+              throw new Exception("client is null");
+          }
           ChannelSftp channelSftp = (ChannelSftp) client._session.openChannel("sftp");
           channelSftp.connect();
           client._sftpSession = channelSftp;
@@ -277,6 +292,9 @@ public class RNSshClientModule extends ReactContextBaseJavaModule {
     new Thread(new Runnable()  {
       public void run() {
         SSHClient client = clientPool.get(key);
+        if (client == null) {
+            throw new Exception("client is null");
+        }
         if (client._sftpSession != null) {
           client._sftpSession.disconnect();
         }
@@ -290,6 +308,9 @@ public class RNSshClientModule extends ReactContextBaseJavaModule {
       public void run() {
         try {
           SSHClient client = clientPool.get(key);
+        if (client == null) {
+            throw new Exception("client is null");
+        }
           ChannelSftp channelSftp = client._sftpSession;
 
           Vector<LsEntry> files = channelSftp.ls(path);
@@ -345,6 +366,9 @@ public class RNSshClientModule extends ReactContextBaseJavaModule {
       public void run() {
         try {
           SSHClient client = clientPool.get(key);
+          if (client == null) {
+              throw new Exception("client is null");
+          }
           ChannelSftp channelSftp = client._sftpSession;
           channelSftp.rename(oldPath, newPath);
           callback.invoke();
@@ -365,6 +389,9 @@ public class RNSshClientModule extends ReactContextBaseJavaModule {
       public void run() {
         try {
           SSHClient client = clientPool.get(key);
+          if (client == null) {
+              throw new Exception("client is null");
+          }
           ChannelSftp channelSftp = client._sftpSession;
           channelSftp.mkdir(path);
           callback.invoke();
@@ -385,6 +412,9 @@ public class RNSshClientModule extends ReactContextBaseJavaModule {
       public void run() {
         try {
           SSHClient client = clientPool.get(key);
+          if (client == null) {
+              throw new Exception("client is null");
+          }
           ChannelSftp channelSftp = client._sftpSession;
           channelSftp.rm(path);
           callback.invoke();
@@ -405,6 +435,9 @@ public class RNSshClientModule extends ReactContextBaseJavaModule {
       public void run() {
         try {
           SSHClient client = clientPool.get(key);
+          if (client == null) {
+              throw new Exception("client is null");
+          }
           ChannelSftp channelSftp = client._sftpSession;
           channelSftp.rmdir(path);
           callback.invoke();
@@ -425,6 +458,9 @@ public class RNSshClientModule extends ReactContextBaseJavaModule {
       public void run() {
         try {
           SSHClient client = clientPool.get(key);
+          if (client == null) {
+              throw new Exception("client is null");
+          }
           ChannelSftp channelSftp = client._sftpSession;
           channelSftp.chmod(permissions, path);
           callback.invoke();
@@ -447,6 +483,9 @@ public class RNSshClientModule extends ReactContextBaseJavaModule {
       public void run() {
         try {
           SSHClient client = clientPool.get(key);
+          if (client == null) {
+              throw new Exception("client is null");
+          }
           client._downloadContinue = true;
           ChannelSftp channelSftp = client._sftpSession;
           channelSftp.get(filePath, path, new progressMonitor(key, "DownloadProgress"));
@@ -468,6 +507,9 @@ public class RNSshClientModule extends ReactContextBaseJavaModule {
       public void run() {
         try {
           SSHClient client = clientPool.get(key);
+          if (client == null) {
+              throw new Exception("client is null");
+          }
           client._uploadContinue = true;
           ChannelSftp channelSftp = client._sftpSession;
           channelSftp.put(filePath, path + '/' + (new File(filePath)).getName(), new progressMonitor(key, "UploadProgress"), ChannelSftp.OVERWRITE);
@@ -486,13 +528,17 @@ public class RNSshClientModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void sftpCancelDownload(final String key) {
     SSHClient client = clientPool.get(key);
-    client._downloadContinue = false;
+    if (client != null) {
+        client._downloadContinue = false;
+    }
   }
 
   @ReactMethod
   public void sftpCancelUpload(final String key) {
     SSHClient client = clientPool.get(key);
-    client._uploadContinue = false;
+    if (client != null) {
+        client._uploadContinue = false;
+    }
   }
 
   @ReactMethod
@@ -501,7 +547,9 @@ public class RNSshClientModule extends ReactContextBaseJavaModule {
     this.disconnectSFTP(key);
 
     SSHClient client = clientPool.get(key);
-    client._session.disconnect();
+    if (client != null) {
+        client._session.disconnect();
+    }
   }
 
   private class progressMonitor implements SftpProgressMonitor {
