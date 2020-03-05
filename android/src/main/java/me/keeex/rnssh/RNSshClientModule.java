@@ -258,6 +258,8 @@ public class RNSshClientModule extends ReactContextBaseJavaModule {
           }
         } catch (IOException error) {
           Log.e(LOGTAG, "Error closing shell:" + error.getMessage());
+        } catch (Exception error) {
+          Log.e(LOGTAG, "Error closing shell:" + error.getMessage());
         }
       }
     }).start();
@@ -293,7 +295,7 @@ public class RNSshClientModule extends ReactContextBaseJavaModule {
       public void run() {
         SSHClient client = clientPool.get(key);
         if (client == null) {
-            throw new Exception("client is null");
+            return;
         }
         if (client._sftpSession != null) {
           client._sftpSession.disconnect();
