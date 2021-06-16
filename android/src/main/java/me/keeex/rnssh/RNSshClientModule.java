@@ -2,7 +2,7 @@ package me.keeex.rnssh;
 
 import android.os.Environment;
 import android.util.Log;
-import android.support.annotation.Nullable;
+import androidx.support.annotation.Nullable;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
