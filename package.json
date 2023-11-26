@@ -4,7 +4,7 @@
   "description": "SSH and SFTP client library for React Native.",
   "main": "lib/sshclient.js",
   "scripts": {
-    "prepare": "npx grunt clean build"
+    "posinstall": "npx grunt clean build"
   },
   "keywords": [
     "react-native"
