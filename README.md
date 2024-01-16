@@ -1,4 +1,4 @@
-# react-native-ssh-sftp
+# SSH and SFTP client library for React Native
 
 SSH and SFTP client library for React Native.
 
@@ -235,22 +235,23 @@ This package wraps the following libraries, which provide the actual SSH/SFTP fu
 
 This package is a fork of Emmanuel Natividad's [react-native-ssh-sftp](https://github.com/enatividad/react-native-ssh-sftp) package. The fork chain from there is as follows:
 
-1. [KeeeX](https://github.com/KeeeX/react-native-ssh-sftp)
+1. [Gabriel Paul "Cley Faye" Risterucci](https://github.com/KeeeX/react-native-ssh-sftp)
 1. [Bishoy Mikhael](https://github.com/MrBmikhael/react-native-ssh-sftp)
 1. [Qian Sha](https://github.com/shaqian/react-native-ssh-sftp)
 
 ## TODO list
 
 - [x] README to have credits to original author(s)/repos
-- [ ] package details correct?
+- [x] package details correct? podspec details correct?
+- [ ] repo settings (security, etc)
+- [ ] linting, tsconfig, etc
+- [ ] contributing guide
+- [ ] update dependencies, look at PR's in upstream repos
+- [ ] update versioning (auto on commit?)
+- [ ] gh actions
+- [ ] sort out the grunt stuff, post install script, etc
 - [ ] publish on npmjs
 - [ ] example app to be restored
 - [ ] iOS support to be made functional (again)
-- [ ] update dependencies, look at PR's in upstream repos
-- [ ] update versioning (auto on commit?)
 - [ ] look at using the latest version of NMSSH
-- [ ] sort out the grunt stuff, post install script, etc
-- [ ] linting, tsconfig, etc
-- [ ] contributing guide
-- [ ] gh actions
-- [ ] dependency updates
+- [ ] engines (node/npm) in package.json

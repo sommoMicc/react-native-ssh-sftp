@@ -1,19 +1,44 @@
 {
   "name": "react-native-ssh-sftp",
-  "version": "1.4.3",
-  "description": "SSH and SFTP client library for React Native.",
+  "version": "1.5.0",
+  "description": "SSH and SFTP client library for React Native",
   "main": "lib/sshclient.js",
   "scripts": {
-    "posinstall": "npx grunt clean build"
+    "postinstall": "echo review: npx grunt clean build"
   },
   "keywords": [
-    "react-native"
+    "react-native",
+    "ssh",
+    "sftp"
   ],
-  "author": "Qian Sha",
+  "homepage": "https://github.com/dylankenneally/react-native-ssh-sftp#readme",
+  "bugs": {
+    "url": "https://github.com/dylankenneally/react-native-ssh-sftp/issues",
+    "email": "project@hostname.com"
+  },
+  "author": {
+    "name": "Dylan Kenneally",
+    "email": "github@dylankenneally.com",
+    "url": "https://github.com/dylankenneally/react-native-ssh-sftp"
+  },
   "contributors": [
     {
+      "name": "Emmanuel Natividad",
+      "url": "https://github.com/enatividad/react-native-ssh-sftp"
+    },
+    {
       "name": "Gabriel Paul \"Cley Faye\" Risterucci",
-      "email": "gabriel@keeex.net"
+      "email": "gabriel@keeex.net",
+      "url": "https://github.com/KeeeX/react-native-ssh-sftp"
+    },
+    {
+      "name": "Bishoy Mikhae",
+      "url": "https://github.com/MrBmikhael/react-native-ssh-sftp"
+    },
+    {
+      "name": "Qian Sha",
+      "email": "x_ash@qq.com",
+      "url": "https://github.com/shaqian/react-native-ssh-sftp"
     }
   ],
   "license": "MIT",
@@ -22,7 +47,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/KeeeX/react-native-ssh-sftp.git"
+    "url": "https://github.com/dylankenneally/react-native-ssh-sftp.git"
   },
   "files": [
     "android/",
