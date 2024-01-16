@@ -1,100 +1,66 @@
-# react-native-ssh-sftp
+# SSH and SFTP client library for React Native
 
 SSH and SFTP client library for React Native.
 
 ## Installation
 
-This fork of the library is not published on npmjs.
+This fork of the library is not published on npmjs, yet.
 
-If you have access to our own repository you can install using:
+To use it, clone the repository, install & pack it as a node module, then install that locally in your project.
+
+```bash
+git clone git@github.com:dylankenneally/react-native-ssh-sftp.git
+cd react-native-ssh-sftp
+npm install
+npm pack
+cd ../your_project
+npm install ../react-native-ssh-sftp/react-native-ssh-sftp-*.tgz
 ```
-npm install @keeex/react-native-ssh-sftp
-```
-
-It is otherwise possible to install the package by hand.
-First, clone this repository; install dependencies, then build package.
-Finally, install in your project.
-```Shell
-/ $ git clone https://github.com/KeeeX/react-native-ssh-sftp.git
-/ $ cd react-native-ssh-sftp
-/react-native-ssh-sftp $ npm install
-/react-native-ssh-sftp $ npm pack
-/react-native-ssh-sftp $ cd ../your_project
-/your_project $ npm install ../react-native-ssh-sftp/keeex-react-native-ssh-sftp-1.1.1.tgz
-```
-
-### iOS (only)
-
-(procedure below is untested on recent version)
-
-NMSSH is required for iOS.
-
-1. Initialize Pod:
-	```
-	cd ios
-	pod init
-	```
-2. Open Podfile and add:
-	```
-	target '[your project's name]' do
-		pod 'NMSSH', '2.2.8'
-	end
-	```
-3. Install Pod:
-	```
-	pod install
-	```
-
-### Manual Link
-
-#### iOS
-
-(not that this should not be required anymore)
-
-1. In XCode, in the project navigator, right click `Libraries` ➜ `Add Files to [your project's name]`
-2. Go to `node_modules` ➜ `react-native-ssh-sftp` and add `RNSSHClient.xcodeproj`
-3. In XCode, in the project navigator, select your project. Add `libRNSSHClient.a` to your project's `Build Phases` ➜ `Link Binary With Libraries`
-
-#### Android
-
-Don't manual link.
-
-## Demo
-
-![example](https://raw.githubusercontent.com/KeeeX/react-native-ssh-sftp/master/example.gif)
-
-- This library is also used in iOS app PiHelper. 
-
-<a href="https://itunes.apple.com/app/pihelper/id1369930932"><img src="https://is4-ssl.mzstatic.com/image/thumb/Purple128/v4/ba/5b/59/ba5b592a-5446-1c21-6703-3eb3fb25007e/AppIcon-1x_U007emarketing-85-220-9.png/246x0w.jpg" align="left" height="75" width="75" ></a>
-<br />
-<br />
-<br />
-
-## Run demo
 
 ### iOS
-```
-cd example
-cd ios
-pod install
-cd ..
-npm install
-react-native run-ios
+
+Update your `Podfile` to use [NMSSH](https://github.com/NMSSH/NMSSH) v2.2.9. Your `Podfile` is located in your React Native project at `./ios/Podfile`.
+
+```ruby
+target '[your project's name]' do
+  pod 'NMSSH', '2.2.9' # <-- add this line
+  # ... rest of your target details ...
+end
 ```
 
+And then run `pod install` in your `./ios` directory.
+
+```bash
+cd ios
+pod install
+cd -
+```
+
+> [!TIP]
+> Adding a `postinstall` script to your `package.json` file to run `pod install` after `npm install` is a good idea. The [`pod-install`](https://www.npmjs.com/package/pod-install) package is a good way to do this.
+>
+> ```json
+> {
+>   "scripts": {
+>     "postinstall": "npx pod-install",
+>   }
+> }
+> ```
+
 ### Android
-```
-cd example
-npm install
-react-native run-android
-```
+
+No additional steps are needed for Android.
+
+### Linking
+
+This project has been updated to use React Native v73 (the latest at the time of writing, Jan 2024) - which means that manual linking is not required.
 
 ## Usage
 
-All functions that run asynchronously where we have to wait for a result
-returns Promises that can reject if an error occured.
+All functions that run asynchronously where we have to wait for a result returns Promises that can reject if an error occurred.
 
 ### Create a client using password authentication
+
 ```javascript
 import SSHClient from 'react-native-ssh-sftp';
 
@@ -107,6 +73,7 @@ SSHClient.connectWithPassword(
 ```
 
 ### Create a client using public key authentication
+
 ```javascript
 import SSHClient from 'react-native-ssh-sftp';
 
@@ -119,36 +86,42 @@ SSHClient.connectWithKey(
 ).then(client => {/*...*/});
 ```
 
-- Public key authentication also supports:
-```
+#### Public key authentication is also supported
+
+```plaintext
 {privateKey: '-----BEGIN RSA......'}
 {privateKey: '-----BEGIN RSA......', publicKey: 'ssh-rsa AAAAB3NzaC1yc2EA......'}
 {privateKey: '-----BEGIN RSA......', publicKey: 'ssh-rsa AAAAB3NzaC1yc2EA......', passphrase: 'Password'}
 ```
 
 ### Close client
+
 ```javascript
 client.disconnect();
 ```
 
 ### Execute SSH command
+
 ```javascript
-var command = 'ls -l';
+const command = 'ls -l';
 client.execute(command)
   .then(output => console.warn(output));
 ```
 
 ### Shell
 
-#### Start shell: 
+#### Start shell
+
 - Supported ptyType: vanilla, vt100, vt102, vt220, ansi, xterm
+
 ```javascript
-var ptyType = 'vanilla';
+const ptyType = 'vanilla';
 client.startShell(ptyType)
   .then(() => {/*...*/});
 ```
 
-#### Read from shell:
+#### Read from shell
+
 ```javascript
 client.on('Shell', (event) => {
   if (event)
@@ -156,14 +129,16 @@ client.on('Shell', (event) => {
 });
 ```
 
-#### Write to shell: 
+#### Write to shell
+
 ```javascript
-var str = 'ls -l\n';
+const str = 'ls -l\n';
 client.writeToShell(str)
   .then(() => {/*...*/});
 ```
 
-#### Close shell: 
+#### Close shell
+
 ```javascript
 client.closeShell();
 ```
@@ -171,43 +146,50 @@ client.closeShell();
 ### SFTP
 
 #### Connect SFTP
+
 ```javascript
 client.connectSFTP()
   .then(() => {/*...*/});
 ```
 
-#### List directory: 
+#### List directory
+
 ```javascript
-var path = '.';
+const path = '.';
 client.sftpLs(path)
   .then(response => console.warn(response));
 ```
 
-#### Create directory: 
+#### Create directory
+
 ```javascript
 client.sftpMkdir('dirName')
   .then(() => {/*...*/});
 ```
 
-#### Rename file or directory: 
+#### Rename file or directory
+
 ```javascript
 client.sftpRename('oldName', 'newName')
   .then(() => {/*...*/});
 ```
 
-#### Remove directory: 
+#### Remove directory
+
 ```javascript
 client.sftpRmdir('dirName')
   .then(() => {/*...*/});
 ```
 
-#### Remove file: 
+#### Remove file
+
 ```javascript
 client.sftpRm('fileName')
   .then(() => {/*...*/});
 ```
 
-#### Download file: 
+#### Download file
+
 ```javascript
 client.sftpDownload('[path-to-remote-file]', '[path-to-local-directory]')
   .then(downloadedFilePath => {
@@ -219,11 +201,12 @@ client.on('DownloadProgress', (event) => {
   console.warn(event);
 });
 
-// Cancel download:
+// Cancel download
 client.sftpCancelDownload();
 ```
 
-#### Upload file: 
+#### Upload file
+
 ```javascript
 client.sftpUpload('[path-to-local-file]', '[path-to-remote-directory]')
   .then(() => {/*...*/});
@@ -233,16 +216,50 @@ client.on('UploadProgress', (event) => {
   console.warn(event);
 });
 
-// Cancel upload:
+// Cancel upload
 client.sftpCancelUpload();
 ```
 
-#### Close SFTP: 
+#### Close SFTP
+
 ```javascript
 client.disconnectSFTP();
 ```
 
 ## Credits
 
-* iOS SSH library: [NMSSH](https://github.com/NMSSH/NMSSH)
-* Android SSH library: [JSch](http://www.jcraft.com/jsch/)
+This package wraps the following libraries, which provide the actual SSH/SFTP functionality:
+
+- [NMSSH](https://github.com/NMSSH/NMSSH) for iOS
+- [JSch](http://www.jcraft.com/jsch/) for Android
+
+This package is a fork of Emmanuel Natividad's [react-native-ssh-sftp](https://github.com/enatividad/react-native-ssh-sftp) package. The fork chain from there is as follows:
+
+1. [Gabriel Paul "Cley Faye" Risterucci](https://github.com/KeeeX/react-native-ssh-sftp)
+1. [Bishoy Mikhael](https://github.com/MrBmikhael/react-native-ssh-sftp)
+1. [Qian Sha](https://github.com/shaqian/react-native-ssh-sftp)
+
+## TODO list
+
+- [x] README to have credits to original author(s)/repos
+- [x] package details correct? podspec details correct?
+- [x] repo settings (security, etc)
+- [ ] sort out the grunt stuff, post install script, etc
+- [ ] review/update dev devs
+  - [x] typescript
+  - [ ] eslint
+- [ ] review src/*ts files
+- [ ] linting, tsconfig, etc
+- [ ] contributing guide
+- [ ] update dependencies, look at PR's in upstream repos
+- [ ] update versioning (auto on commit?)
+- [ ] gh actions
+  - [x] depenabot updates
+  - [ ] build on PR
+  - [ ] tag
+  - [ ] publish to npmjs
+- [ ] publish on npmjs
+- [ ] example app to be restored
+- [ ] iOS support to be made functional (again)
+- [ ] look at using the latest version of NMSSH
+- [ ] engines (node/npm) in package.json
