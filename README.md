@@ -63,7 +63,7 @@ Don't manual link.
 
 ![example](https://raw.githubusercontent.com/KeeeX/react-native-ssh-sftp/master/example.gif)
 
-- This library is also used in iOS app PiHelper. 
+- This library is also used in iOS app PiHelper.
 
 <a href="https://itunes.apple.com/app/pihelper/id1369930932"><img src="https://is4-ssl.mzstatic.com/image/thumb/Purple128/v4/ba/5b/59/ba5b592a-5446-1c21-6703-3eb3fb25007e/AppIcon-1x_U007emarketing-85-220-9.png/246x0w.jpg" align="left" height="75" width="75" ></a>
 <br />
@@ -140,7 +140,7 @@ client.execute(command)
 
 ### Shell
 
-#### Start shell: 
+#### Start shell:
 - Supported ptyType: vanilla, vt100, vt102, vt220, ansi, xterm
 ```javascript
 var ptyType = 'vanilla';
@@ -156,14 +156,14 @@ client.on('Shell', (event) => {
 });
 ```
 
-#### Write to shell: 
+#### Write to shell:
 ```javascript
 var str = 'ls -l\n';
 client.writeToShell(str)
   .then(() => {/*...*/});
 ```
 
-#### Close shell: 
+#### Close shell:
 ```javascript
 client.closeShell();
 ```
@@ -176,38 +176,38 @@ client.connectSFTP()
   .then(() => {/*...*/});
 ```
 
-#### List directory: 
+#### List directory:
 ```javascript
 var path = '.';
 client.sftpLs(path)
   .then(response => console.warn(response));
 ```
 
-#### Create directory: 
+#### Create directory:
 ```javascript
 client.sftpMkdir('dirName')
   .then(() => {/*...*/});
 ```
 
-#### Rename file or directory: 
+#### Rename file or directory:
 ```javascript
 client.sftpRename('oldName', 'newName')
   .then(() => {/*...*/});
 ```
 
-#### Remove directory: 
+#### Remove directory:
 ```javascript
 client.sftpRmdir('dirName')
   .then(() => {/*...*/});
 ```
 
-#### Remove file: 
+#### Remove file:
 ```javascript
 client.sftpRm('fileName')
   .then(() => {/*...*/});
 ```
 
-#### Download file: 
+#### Download file:
 ```javascript
 client.sftpDownload('[path-to-remote-file]', '[path-to-local-directory]')
   .then(downloadedFilePath => {
@@ -223,7 +223,7 @@ client.on('DownloadProgress', (event) => {
 client.sftpCancelDownload();
 ```
 
-#### Upload file: 
+#### Upload file:
 ```javascript
 client.sftpUpload('[path-to-local-file]', '[path-to-remote-directory]')
   .then(() => {/*...*/});
@@ -237,7 +237,7 @@ client.on('UploadProgress', (event) => {
 client.sftpCancelUpload();
 ```
 
-#### Close SFTP: 
+#### Close SFTP:
 ```javascript
 client.disconnectSFTP();
 ```
@@ -246,3 +246,12 @@ client.disconnectSFTP();
 
 * iOS SSH library: [NMSSH](https://github.com/NMSSH/NMSSH)
 * Android SSH library: [JSch](http://www.jcraft.com/jsch/)
+
+
+## TODO list
+
+- [ ] example app to be restored
+- [ ] README to have credits to original author(s)/repos
+- [ ] iOS support to be made functional (again)
+- [ ] publish on npmjs
+- [ ] update dependencies, look at PR's in upstream repos

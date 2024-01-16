@@ -1,10 +1,13 @@
+# OS
+.DS_Store
+
 # Project
 /node_modules
 /lib
 /tsconfig.tsbuildinfo
+/react-native-ssh-sftp*.tgz
 
 # Xcode
-#
 build/
 *.pbxuser
 !default.pbxuser
@@ -22,10 +25,8 @@ DerivedData
 *.ipa
 *.xcuserstate
 project.xcworkspace
-      
 
 # Android/IntelliJ
-#
 build/
 .idea
 .gradle
@@ -34,3 +35,6 @@ local.properties
 
 # CocoaPods
 Pods
+
+# Dev scratch pad
+scratch/
