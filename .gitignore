@@ -4,7 +4,6 @@
 # Project
 /node_modules
 /lib
-/tsconfig.tsbuildinfo
 /react-native-ssh-sftp*.tgz
 
 # Xcode
