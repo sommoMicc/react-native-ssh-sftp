@@ -244,13 +244,14 @@ This package is a fork of Emmanuel Natividad's [react-native-ssh-sftp](https://g
 - [x] README to have credits to original author(s)/repos
 - [x] package details correct? podspec details correct?
 - [x] repo settings (security, etc)
-- [ ] sort out the grunt stuff, post install script, etc
-- [ ] review/update dev devs
+- [x] sort out the grunt stuff, post install script, etc
+- [x] review/update dev devs
   - [x] typescript
-  - [ ] eslint
+  - [x] eslint
 - [ ] review src/*ts files
-- [ ] linting, tsconfig, etc
+- [x] linting, tsconfig, etc
 - [ ] contributing guide
+  - [ ] README to include prerequisites, etc
 - [ ] update dependencies, look at PR's in upstream repos
 - [ ] update versioning (auto on commit?)
 - [ ] gh actions
