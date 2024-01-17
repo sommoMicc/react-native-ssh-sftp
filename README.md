@@ -4,17 +4,8 @@ SSH and SFTP client library for React Native.
 
 ## Installation
 
-This fork of the library is not published on npmjs, yet.
-
-To use it, clone the repository, install & pack it as a node module, then install that locally in your project.
-
 ```bash
-git clone git@github.com:dylankenneally/react-native-ssh-sftp.git
-cd react-native-ssh-sftp
-npm install
-npm pack
-cd ../your_project
-npm install ../react-native-ssh-sftp/react-native-ssh-sftp-*.tgz
+npm install @dylankenneally/react-native-ssh-sftp
 ```
 
 ### iOS
@@ -259,7 +250,7 @@ This package is a fork of Emmanuel Natividad's [react-native-ssh-sftp](https://g
   - [ ] build on PR
   - [ ] tag
   - [ ] publish to npmjs
-- [ ] publish on npmjs
+- [x] publish on npmjs
 - [ ] example app to be restored
 - [x] iOS support to be made functional (again)
   - [x] review if flippers OpenSSL version is causing issues: <https://github.com/shaqian/react-native-ssh-sftp/issues/19>
