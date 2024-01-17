@@ -66,7 +66,7 @@ RCT_EXPORT_METHOD(connectToHost:(NSString *)host
             [session authenticateByPassword:passwordOrKey];
         else
             [session authenticateByInMemoryPublicKey:[passwordOrKey objectForKey:@"publicKey"] privateKey:[passwordOrKey objectForKey:@"privateKey"] andPassword:[passwordOrKey objectForKey:@"passphrase"]];
-            
+
             if (session.isAuthorized) {
                 SSHClient* client = [[SSHClient alloc] init];
                 client._session = session;
@@ -82,8 +82,13 @@ RCT_EXPORT_METHOD(connectToHost:(NSString *)host
             }
         });
     } else {
+      if (session) {
         NSLog(@"Connection to host %@ failed", host);
-        callback(@[[NSString stringWithFormat:@"Connection to host %@ failed", host]]);
+        callback(@[[NSString stringWithFormat:@"Connection to host %@ failed, with session", host]]);
+      } else {
+        NSLog(@"Connection to host %@ failed", host);
+        callback(@[[NSString stringWithFormat:@"Connection to host %@ failed, without session", host]]);
+      }
     }
 }
 
@@ -190,7 +195,7 @@ RCT_EXPORT_METHOD(sftpLs:(NSString *)path
     if (client) {
         if ([self isConnected:client._session withCallback:callback] &&
             [self isSFTPConnected:client._sftpSession withCallback:callback]) {
-            
+
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 NSArray* fileList = [client._sftpSession contentsOfDirectoryAtPath:path];
                 if (fileList) {
