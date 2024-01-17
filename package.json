@@ -1,10 +1,11 @@
 {
   "name": "react-native-ssh-sftp",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "SSH and SFTP client library for React Native",
   "main": "lib/sshclient.js",
   "scripts": {
     "_postinstall": "npm run compile",
+    "prepare": "husky install",
     "build": "npm run compile && npm pack",
     "precompile": "npm run lint:build",
     "compile": "npx tsc",
@@ -65,6 +66,7 @@
     "@typescript-eslint/parser": "^6.19.0",
     "cross-env": "^7.0.3",
     "eslint": "^8.56.0",
+    "husky": "^8.0.3",
     "typescript": "^5.3.3"
   }
 }
