@@ -248,7 +248,7 @@ This package is a fork of Emmanuel Natividad's [react-native-ssh-sftp](https://g
 - [x] review/update dev devs
   - [x] typescript
   - [x] eslint
-- [ ] review src/*ts files
+- [x] review src/*ts files
 - [x] linting, tsconfig, etc
 - [ ] contributing guide
   - [ ] README to include prerequisites, etc
