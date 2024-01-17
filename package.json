@@ -4,7 +4,7 @@
   "description": "SSH and SFTP client library for React Native",
   "main": "lib/sshclient.js",
   "scripts": {
-    "postinstall": "npm run compile",
+    "_postinstall": "npm run compile",
     "precompile": "npm run lint:build",
     "compile": "npx tsc",
     "lint": "eslint .",
@@ -47,7 +47,7 @@
   ],
   "license": "MIT",
   "peerDependencies": {
-    "react-native": "^0.73.0"
+    "react-native": "*"
   },
   "repository": {
     "type": "git",
