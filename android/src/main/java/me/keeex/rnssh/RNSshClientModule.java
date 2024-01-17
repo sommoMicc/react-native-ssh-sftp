@@ -1,4 +1,4 @@
-package me.keeex.rnssh;
+package me.dylankenneally.rnssh;
 
 import android.os.Environment;
 import android.util.Log;
