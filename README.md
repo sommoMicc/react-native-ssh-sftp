@@ -261,7 +261,13 @@ This package is a fork of Emmanuel Natividad's [react-native-ssh-sftp](https://g
   - [ ] publish to npmjs
 - [ ] publish on npmjs
 - [ ] example app to be restored
-- [ ] iOS support to be made functional (again)
-  - [ ] review if flippers OpenSSL version is causing issues: <https://github.com/shaqian/react-native-ssh-sftp/issues/19>
+- [x] iOS support to be made functional (again)
+  - [x] review if flippers OpenSSL version is causing issues: <https://github.com/shaqian/react-native-ssh-sftp/issues/19>
 - [ ] look at using the latest version of NMSSH
 - [ ] engines (node/npm) in package.json
+
+### WIP notes
+
+#### Flipper - OpenSSL version issue
+
+Disabling Flipper in iOS does not resolve the issue. But... it does remove the extra OpenSSL libs, which is a good thing. Add to notes for installation/usage?
