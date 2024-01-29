@@ -124,7 +124,7 @@ export default class SSHClient {
    * @returns A Promise that resolves to an instance of SSHClient if the connection is successful.
    * @throws If there is an error during the connection process.
    */
-  static connectWithPassword(host: string, port: number, username: string, password: string, callback: CallbackFunction<SSHClient>): Promise<SSHClient> {
+  static connectWithPassword(host: string, port: number, username: string, password: string, callback?: CallbackFunction<SSHClient>): Promise<SSHClient> {
     return new Promise((resolve, reject) => {
       const result = new SSHClient(host, port, username, password, (error: CBError) => {
         if (callback) {
@@ -415,7 +415,7 @@ export default class SSHClient {
    * @param callback - Optional callback function to handle the result asynchronously.
    * @returns A promise that resolves to the result of the SFTP listing operation.
    */
-  sftpLs(path: string, callback: CallbackFunction<LsResult>): Promise<LsResult> {
+  sftpLs(path: string, callback?: CallbackFunction<LsResult>): Promise<LsResult> {
     return this.checkSFTP(callback)
       .then(() => new Promise((resolve, reject) => {
         RNSSHClient.sftpLs(path, this._key, (error: CBError, response: LsResult) => {
@@ -439,7 +439,7 @@ export default class SSHClient {
    * @param callback An optional callback function to handle the result or error.
    * @returns A Promise that resolves when the file or directory is successfully renamed.
    */
-  sftpRename(oldPath: string, newPath: string, callback: CallbackFunction<void>): Promise<void> {
+  sftpRename(oldPath: string, newPath: string, callback?: CallbackFunction<void>): Promise<void> {
     return this.checkSFTP(callback)
       .then(() => new Promise((resolve, reject) => {
         RNSSHClient.sftpRename(oldPath, newPath, this._key, (error: CBError) => {
@@ -463,7 +463,7 @@ export default class SSHClient {
    * @param callback - An optional callback function to handle the result.
    * @returns A promise that resolves when the directory is created successfully.
    */
-  sftpMkdir(path: string, callback: CallbackFunction<void>): Promise<void> {
+  sftpMkdir(path: string, callback?: CallbackFunction<void>): Promise<void> {
     return this.checkSFTP(callback)
       .then(() => new Promise((resolve, reject) => {
         RNSSHClient.sftpMkdir(path, this._key, (error: CBError) => {
@@ -487,7 +487,7 @@ export default class SSHClient {
    * @param callback - An optional callback function to handle the result or error.
    * @returns A promise that resolves when the file is successfully removed.
    */
-  sftpRm(path: string, callback: CallbackFunction<void>): Promise<void> {
+  sftpRm(path: string, callback?: CallbackFunction<void>): Promise<void> {
     return this.checkSFTP(callback)
       .then(() => new Promise((resolve, reject) => {
         RNSSHClient.sftpRm(path, this._key, (error: CBError) => {
@@ -511,7 +511,7 @@ export default class SSHClient {
    * @param callback - Optional callback function to handle the result or error.
    * @returns A promise that resolves when the directory is successfully removed.
    */
-  sftpRmdir(path: string, callback: CallbackFunction<void>): Promise<void> {
+  sftpRmdir(path: string, callback?: CallbackFunction<void>): Promise<void> {
     return this.checkSFTP(callback)
       .then(() => new Promise((resolve, reject) => {
         RNSSHClient.sftpRmdir(path, this._key, (error: CBError) => {
@@ -538,7 +538,7 @@ export default class SSHClient {
    * @param callback - An optional callback function to handle the result or error.
    * @returns A Promise that resolves when the permissions are successfully changed.
    */
-  sftpChmod(path: string, permissions: number, callback: CallbackFunction<void>): Promise<void> {
+  sftpChmod(path: string, permissions: number, callback?: CallbackFunction<void>): Promise<void> {
     return this.checkSFTP(callback)
       .then(() => new Promise((resolve, reject) => {
         RNSSHClient.sftpChmod(path, permissions, this._key, (error: CBError) => {
@@ -563,7 +563,7 @@ export default class SSHClient {
    * @param callback - An optional callback function to be called after the upload is complete or an error occurs.
    * @returns A Promise that resolves when the upload is complete or rejects with an error.
    */
-  sftpUpload(localFilePath: string, remoteFilePath: string, callback: CallbackFunction<void>): Promise<void> {
+  sftpUpload(localFilePath: string, remoteFilePath: string, callback?: CallbackFunction<void>): Promise<void> {
     return this.checkSFTP(callback)
       .then(() => new Promise((resolve, reject) => {
         ++this._counters.upload;
