@@ -15,5 +15,5 @@ Pod::Spec.new do |s|
   s.platforms        = { :ios => "11.0", :tvos => "9.2" }
 
   s.dependency 'React'
-  s.dependency 'NMSSH', '2.2.9'
+  s.dependency 'NMSSH'
 end
