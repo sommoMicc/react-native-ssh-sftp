@@ -15,7 +15,7 @@ int uploadedPerc = 0;
 
 - (instancetype)init {
     if ((self = [super init])) {
-        _session = [[NMSSHSession alloc] init];
+        _session = [[NMSSHSession alloc] initWithHost:@"192.168.2.1" andUsername:@"root"];
         _sftpSession = [[NMSFTP alloc] init];
         _key = [[NSString alloc] init];
         _downloadContinue = false;
@@ -29,7 +29,7 @@ int uploadedPerc = 0;
     NMSSHChannel *channel = _session.channel;
     channel.delegate = self;
     channel.requestPty = YES;
-    
+
     NSArray *items = @[@"vanilla", @"vt100", @"vt102", @"vt220", @"ansi", @"xterm"];
     NSUInteger item = [items indexOfObject:ptyType];
     switch (item) {
@@ -52,7 +52,7 @@ int uploadedPerc = 0;
             type = NMSSHChannelPtyTerminalXterm;
             break;
     }
-    
+
     channel.ptyTerminalType = type;
     dispatch_async(dispatch_get_main_queue(), ^
     {
