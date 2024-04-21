@@ -420,10 +420,10 @@ export default class SSHClient {
       .then(() => new Promise((resolve, reject) => {
         RNSSHClient.sftpLs(path, this._key, (error: CBError, _response: string[]) => {
           const response = _response ? _response.map(p => {
-            // Removing control character from response, because those can make JSON parse
-            // failing
+            // eslint-disable-next-line no-control-regex -- Control characters are removed from the response, because they can make JSON.parse fail
             return JSON.parse(p.replace(/[\u0000-\u001F]/g, '')) as LsResult;
-          }) : undefined
+          }) : undefined;
+
           if (callback) {
             callback(error, response);
           }
@@ -432,7 +432,7 @@ export default class SSHClient {
             return reject(error);
           }
 
-          resolve(response);
+          resolve(response!);
         });
       }));
   }
