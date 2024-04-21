@@ -415,10 +415,15 @@ export default class SSHClient {
    * @param callback - Optional callback function to handle the result asynchronously.
    * @returns A promise that resolves to the result of the SFTP listing operation.
    */
-  sftpLs(path: string, callback?: CallbackFunction<LsResult>): Promise<LsResult> {
+  sftpLs(path: string, callback?: CallbackFunction<LsResult[]>): Promise<LsResult[]> {
     return this.checkSFTP(callback)
       .then(() => new Promise((resolve, reject) => {
-        RNSSHClient.sftpLs(path, this._key, (error: CBError, response: LsResult) => {
+        RNSSHClient.sftpLs(path, this._key, (error: CBError, _response: string[]) => {
+          const response = _response ? _response.map(p => {
+            // Removing control character from response, because those can make JSON parse
+            // failing
+            return JSON.parse(p.replace(/[\u0000-\u001F]/g, '')) as LsResult;
+          }) : undefined
           if (callback) {
             callback(error, response);
           }
